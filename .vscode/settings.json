@@ -1,0 +1,6 @@
+{
+  "cSpell.words": ["glfw", "imgui", "opengl"],
+  "files.associations": {
+    "stb_image.h": "c"
+  }
+}
