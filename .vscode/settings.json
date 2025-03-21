@@ -1,6 +1,7 @@
 {
-  "cSpell.words": ["glfw", "imgui", "opengl"],
+  "cSpell.words": ["GLES", "glfw", "imgui", "opengl"],
   "files.associations": {
-    "stb_image.h": "c"
+    "stb_image.h": "c",
+    "cstdio": "cpp"
   }
 }
