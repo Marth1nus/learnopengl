@@ -1,16 +1,20 @@
 {
   "cSpell.words": [
+    "emcc",
     "Emscripten",
     "GLES",
     "glfw",
     "highp",
-    "imgui", 
+    "imgui",
     "Lsizei",
+    "mediump",
     "MSVC",
     "opengl",
     "Programiv",
     "Shaderiv",
-    "WEBGL"
+    "Wcursorposfun",
+    "WEBGL",
+    "Wmousebuttonfun"
   ],
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "files.associations": {
@@ -79,6 +83,8 @@
     "xmemory": "cpp",
     "xstring": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "filesystem": "cpp",
+    "source_location": "cpp"
   }
 }
