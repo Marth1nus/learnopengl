@@ -1,4 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
+#if defined(USE_GLAD)
+#include <glad/glad.h>
+#else // defined(USE_GLAD)
+#include <GLES3/gl3.h>
+#endif // defined(USE_GLAD)
+#if defined(__EMSCRIPTEN__)
+#include <emscripten.h>
+#else  // defined(__EMSCRIPTEN__)
+#endif // defined(__EMSCRIPTEN__)
 
 #include <cstdio>
 #include <array>
@@ -8,7 +17,6 @@
 #include <source_location>
 #include <filesystem>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <stb_image.h>
@@ -105,14 +113,17 @@ int main()
     glfwTerminate();
     return EXIT_FAILURE;
   }
-
   glfwMakeContextCurrent(window);
+
+#if defined(USE_GLAD)
   if (not gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
   {
     std::fprintf(stderr, "%s init fail\n", "glad");
     glfwTerminate();
     return EXIT_FAILURE;
   }
+#else  // defined(USE_GLAD)
+#endif // defined(USE_GLAD)
 
   auto static click_pos = glm::f64vec2{};
   glfwSetMouseButtonCallback(window, [](GLFWwindow *window, int button, int action, int mods)
@@ -149,8 +160,11 @@ int main()
   auto prev_time = glfwGetTime();
   auto mouse_pos = glm::f64vec2{};
   auto window_size = glm::i32vec2{};
-  while (not glfwWindowShouldClose(window))
+  auto const render_loop = [&]
   {
+    if (glfwWindowShouldClose(window))
+      return false;
+
     glfwPollEvents();
 
     frame++;
@@ -199,7 +213,21 @@ int main()
     glfwSwapInterval(1);
     glfwSwapBuffers(window);
     glCheckError();
-  }
+
+    return true;
+  };
+#if defined(__EMSCRIPTEN__)
+  auto static const &render_loop_static = render_loop;
+  auto static constexpr emscripten_main_loop = []
+  {
+    if (not render_loop_static())
+      emscripten_cancel_main_loop();
+  };
+  emscripten_set_main_loop(emscripten_main_loop, 0, 1);
+#else  // defined(__EMSCRIPTEN__)
+  while (render_loop())
+    ;
+#endif // defined(__EMSCRIPTEN__)
 
   glDeleteProgram(pid);
   glDeleteBuffers(1, &vbo);

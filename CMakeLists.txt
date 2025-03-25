@@ -28,13 +28,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm stb imgui)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Emscripten")
   set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/pages
     OUTPUT_NAME ${PROJECT_NAME}
     SUFFIX .html)
   target_link_options(${PROJECT_NAME} PRIVATE
     -sUSE_GLFW=3
     -sUSE_WEBGL2=1
     -sFULL_ES3=1
-    --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/res@res
+    --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/shader@shader
   )
   
 else()

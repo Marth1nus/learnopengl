@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "emcc",
+    "emcmake",
     "Emscripten",
     "GLES",
     "glfw",
@@ -12,14 +13,13 @@
     "opengl",
     "Programiv",
     "Shaderiv",
+    "STREQUAL",
     "Wcursorposfun",
     "WEBGL",
     "Wmousebuttonfun"
   ],
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "files.associations": {
-    "stb_image.h": "c",
-    "cstdio": "cpp",
     "algorithm": "cpp",
     "array": "cpp",
     "atomic": "cpp",
@@ -34,11 +34,13 @@
     "cstdarg": "cpp",
     "cstddef": "cpp",
     "cstdint": "cpp",
+    "cstdio": "cpp",
     "cstdlib": "cpp",
     "cstring": "cpp",
     "ctime": "cpp",
     "cwchar": "cpp",
     "exception": "cpp",
+    "filesystem": "cpp",
     "format": "cpp",
     "forward_list": "cpp",
     "functional": "cpp",
@@ -58,8 +60,10 @@
     "ostream": "cpp",
     "random": "cpp",
     "ratio": "cpp",
+    "source_location": "cpp",
     "span": "cpp",
     "sstream": "cpp",
+    "stb_image.h": "c",
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "string": "cpp",
@@ -83,8 +87,6 @@
     "xmemory": "cpp",
     "xstring": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp",
-    "filesystem": "cpp",
-    "source_location": "cpp"
+    "xutility": "cpp"
   }
 }
