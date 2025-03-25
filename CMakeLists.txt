@@ -5,6 +5,14 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(MSVC)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
+endif()
+
 include(FetchContent)
 FetchContent_Declare(glm GIT_REPOSITORY https://github.com/g-truc/glm GIT_TAG 1.0.1)
 FetchContent_MakeAvailable(glm)
@@ -26,9 +34,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Emscripten")
     -sUSE_GLFW=3
     -sUSE_WEBGL2=1
     -sFULL_ES3=1
-    -sSTACK_SIZE=1048576 # 1MB aka 2^20
-    -sINITIAL_MEMORY=33554432 # 32MB aka 2^25
-    --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/res@res
+    --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/shader@shader
   )
   
 else()
