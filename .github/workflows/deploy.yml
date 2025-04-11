@@ -27,11 +27,8 @@ jobs:
 
       - name: Build WebAssembly
         run: |
-          mkdir build-emcc
-          pushd build-emcc
-          emcmake cmake ..
-          cmake --build .
-          popd
+          cmake --preset emscripten
+          cmake --build --preset emscripten --config Release
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

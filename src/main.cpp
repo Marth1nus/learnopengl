@@ -16,6 +16,7 @@
 #include <memory>
 #include <source_location>
 #include <filesystem>
+#include <utility>
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -170,6 +171,9 @@ int main()
     frame++;
     auto const time = glfwGetTime();
     auto const dt = time - std::exchange(prev_time, time);
+    auto const t = std::time(nullptr);
+    auto const tm = *std::localtime(&t);
+
     glfwGetCursorPos(window, &mouse_pos.x, &mouse_pos.y);
     glfwGetWindowSize(window, &window_size.x, &window_size.y);
     glViewport(0, 0, window_size.x, window_size.y);
@@ -190,8 +194,6 @@ int main()
     glCheckError();
 
     glUseProgram(pid);
-    auto const t = std::time(nullptr);
-    auto const tm = *std::localtime(&t);
     glUniform3f(glGetUniformLocation(pid, "iResolution" /* */), (float)(window_size.x), (float)(window_size.y), (1)); // viewport resolution (in pixels)
     glUniform1f(glGetUniformLocation(pid, "iTime" /*       */), (float)(time));                                       // shader playback time (in seconds)
     glUniform1f(glGetUniformLocation(pid, "iTimeDelta" /*  */), (float)(dt));                                         // render time (in seconds)

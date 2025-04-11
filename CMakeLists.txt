@@ -14,7 +14,9 @@ if(MSVC)
 endif()
 
 include(FetchContent)
-FetchContent_Declare(glm GIT_REPOSITORY https://github.com/g-truc/glm GIT_TAG 1.0.1)
+set(SHARED_DEPENDENCY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vendor/FetchContent")
+FetchContent_Declare(glm  GIT_REPOSITORY https://github.com/g-truc/glm    GIT_TAG 1.0.1 SOURCE_DIR ${SHARED_DEPENDENCY_SOURCE_DIR}/glm )
+FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.4   SOURCE_DIR ${SHARED_DEPENDENCY_SOURCE_DIR}/glfw)
 FetchContent_MakeAvailable(glm)
 add_subdirectory(vendor/stb)
 add_subdirectory(vendor/imgui)
@@ -28,7 +30,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm stb imgui)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Emscripten")
   set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/pages
     OUTPUT_NAME ${PROJECT_NAME}
     SUFFIX .html)
   target_link_options(${PROJECT_NAME} PRIVATE
@@ -37,9 +38,14 @@ if (CMAKE_SYSTEM_NAME MATCHES "Emscripten")
     -sFULL_ES3=1
     --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/shader@shader
   )
-  
+  if (DEFINED GITHUB_PAGES_DIR)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${GITHUB_PAGES_DIR}
+      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG> ${GITHUB_PAGES_DIR}
+    )
+  endif()
+
 else()
-  FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.4)
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)

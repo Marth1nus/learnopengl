@@ -1,8 +1,11 @@
 {
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cmake.useCMakePresets": "always",
   "cSpell.words": [
     "emcc",
     "emcmake",
     "Emscripten",
+    "EMSDK",
     "GLES",
     "glfw",
     "highp",
@@ -16,9 +19,9 @@
     "STREQUAL",
     "Wcursorposfun",
     "WEBGL",
+    "webglcontextlost",
     "Wmousebuttonfun"
   ],
-  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "files.associations": {
     "algorithm": "cpp",
     "array": "cpp",
@@ -88,5 +91,6 @@
     "xstring": "cpp",
     "xtr1common": "cpp",
     "xutility": "cpp"
-  }
+  },
+  "liveServer.settings.root": "/pages/"
 }
