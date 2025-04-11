@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #if defined(USE_GLAD)
 #include <glad/glad.h>
 #else // defined(USE_GLAD)
@@ -16,6 +15,7 @@
 #include <memory>
 #include <source_location>
 #include <filesystem>
+#include <utility>
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -26,8 +26,8 @@ auto read_file_all(char const *filepath) -> std::string
   auto res = std::string{};
   if (auto const file = std::fopen(filepath, "r"))
   {
-    res.resize((std::fseek(file, 0, SEEK_END), std::ftell(file)));
-    res.resize((std::fseek(file, 0, SEEK_SET), std::fread(res.data(), sizeof(res.at(0)), res.size(), file)));
+    res.resize((std::fseek(file, 0, SEEK_END), (size_t)::ftell(file)));
+    res.resize((std::fseek(file, 0, SEEK_SET), (size_t)::fread(res.data(), sizeof(res.at(0)), res.size(), file)));
     std::fclose(file);
   }
   return res;
@@ -40,11 +40,11 @@ auto static gl_check_error(std::source_location location = std::source_location:
   while ((err = glGetError()) not_eq GL_NO_ERROR)
   {
     auto name = "UNKNOWN_ERROR";
-    for (auto const [err_num, err_name] : {std::pair{GL_INVALID_ENUM /*                  */, "INVALID_ENUM" /*                  */},
-                                           std::pair{GL_INVALID_VALUE /*                 */, "INVALID_VALUE" /*                 */},
-                                           std::pair{GL_INVALID_OPERATION /*             */, "INVALID_OPERATION" /*             */},
-                                           std::pair{GL_OUT_OF_MEMORY /*                 */, "OUT_OF_MEMORY" /*                 */},
-                                           std::pair{GL_INVALID_FRAMEBUFFER_OPERATION /* */, "INVALID_FRAMEBUFFER_OPERATION" /* */}})
+    for (auto const &[err_num, err_name] : {std::pair{(GLenum)GL_INVALID_ENUM /*                  */, "INVALID_ENUM" /*                  */},
+                                            std::pair{(GLenum)GL_INVALID_VALUE /*                 */, "INVALID_VALUE" /*                 */},
+                                            std::pair{(GLenum)GL_INVALID_OPERATION /*             */, "INVALID_OPERATION" /*             */},
+                                            std::pair{(GLenum)GL_OUT_OF_MEMORY /*                 */, "OUT_OF_MEMORY" /*                 */},
+                                            std::pair{(GLenum)GL_INVALID_FRAMEBUFFER_OPERATION /* */, "INVALID_FRAMEBUFFER_OPERATION" /* */}})
       if (err == err_num)
         name = err_name;
     std::fprintf(stderr, "GLES Error 0x%03x %-18s on line %u from function %s\n", err, name, location.line(), location.function_name());
@@ -58,7 +58,7 @@ auto compile_shader(GLuint sid, char const *glsl) -> GLuint
   if (auto status = 0, len = 0; glGetShaderiv(sid, GL_COMPILE_STATUS, &status), not status)
   {
     glGetShaderiv(sid, GL_INFO_LOG_LENGTH, &len);
-    auto const log = std::make_unique<char[]>(len);
+    auto const log = std::make_unique<char[]>((size_t)len);
     glGetShaderInfoLog(sid, len, &len, log.get());
     std::fprintf(stderr, "Shader Error: %s", log.get());
     glCheckError();
@@ -83,7 +83,7 @@ auto make_program(char const *vert_glsl, const char *frag_glsl) -> GLuint
   if (auto status = 0, len = 0; glGetProgramiv(pid, GL_LINK_STATUS, &status), not status)
   {
     glGetProgramiv(pid, GL_INFO_LOG_LENGTH, &len);
-    auto const log = std::make_unique<char[]>(len);
+    auto const log = std::make_unique<char[]>((size_t)len);
     glGetProgramInfoLog(pid, len, &len, log.get());
     std::fprintf(stderr, "Program Error: %s", log.get());
     glDeleteProgram(pid), pid = 0;
@@ -126,7 +126,7 @@ int main()
 #endif // defined(USE_GLAD)
 
   auto static click_pos = glm::f64vec2{};
-  glfwSetMouseButtonCallback(window, [](GLFWwindow *window, int button, int action, int mods)
+  glfwSetMouseButtonCallback(window, [](GLFWwindow *window, int /* button */, int /* action */, int /* mods */)
                              { glfwGetCursorPos(window, &click_pos.x, &click_pos.y); });
 
   auto static constexpr vertices = std::array{
@@ -139,7 +139,7 @@ int main()
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, std::span{vertices}.size_bytes(), vertices.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) std::span{vertices}.size_bytes(), vertices.data(), GL_STATIC_DRAW);
   glCheckError();
 
   GLuint vao;
@@ -170,6 +170,9 @@ int main()
     frame++;
     auto const time = glfwGetTime();
     auto const dt = time - std::exchange(prev_time, time);
+    auto const t = std::time(nullptr);
+    auto const tm = *std::localtime(&t);
+
     glfwGetCursorPos(window, &mouse_pos.x, &mouse_pos.y);
     glfwGetWindowSize(window, &window_size.x, &window_size.y);
     glViewport(0, 0, window_size.x, window_size.y);
@@ -190,8 +193,6 @@ int main()
     glCheckError();
 
     glUseProgram(pid);
-    auto const t = std::time(nullptr);
-    auto const tm = *std::localtime(&t);
     glUniform3f(glGetUniformLocation(pid, "iResolution" /* */), (float)(window_size.x), (float)(window_size.y), (1)); // viewport resolution (in pixels)
     glUniform1f(glGetUniformLocation(pid, "iTime" /*       */), (float)(time));                                       // shader playback time (in seconds)
     glUniform1f(glGetUniformLocation(pid, "iTimeDelta" /*  */), (float)(dt));                                         // render time (in seconds)

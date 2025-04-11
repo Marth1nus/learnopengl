@@ -6,33 +6,44 @@ View the public web-build [here](https://marth1nus.github.io/learnopengl)
 
 # Compile
 
-Start but cloning the repo
+### Start but cloning the repo
 
 ```sh
 git clone https://github.com/Marth1nus/learnopengl
 cd learnopengl
 ```
 
-For a Current-Platform build
+### For a Native-Platform build (Linux, Mac, or Windows)
 
 ```sh
-mkdir build
-pushd build
-cmake ..
-cmake --build .
-popd
+cmake --preset native
+cmake --build --preset native
 ```
 
-For a web-build
+This will build for the **current development platform**.\
+On **Linux** it will build for **Linux** and so on.
+
+**Note** that on **Windows** it will try to build using **Ninja** which will only work when using **Developer PowerShell for VS 2022** or a shell with the associated **environment variables for Visual Studio**. To test if it will work try running `cl.exe` to see if it is available.
+
+### For a Windows-Platform build
 
 ```sh
-mkdir build-emcc
-pushd build-emcc
-emcmake cmake ..
-cmake --build .
-popd
-# Resulting Webpage will be in the ./pages/ directory
+cmake --preset windows
+cmake --build --preset windows
 ```
+
+This will build using the **visual studio generator** so it can be done on any windows environment.
+
+### For a Web-Platform build
+
+```sh
+cmake --preset emscripten
+cmake --build --preset emscripten
+```
+
+This will build using **Emscripten** for **WASM**.
+
+**Note**: Make sure that the `EMSDK` environment variable is available as it is used to find the toolchain file. The preset is disabled if the variable is not present.
 
 # Support Goals
 

@@ -2,13 +2,13 @@
 precision highp float;
 precision mediump int;
 
-uniform vec3 /*  */ iResolution;           // viewport resolution (in pixels)
-uniform float /* */ iTime;                 // shader playback time (in seconds)
-uniform float /* */ iTimeDelta;            // render time (in seconds)
-uniform float /* */ iFrameRate;            // shader frame rate
-uniform int /*   */ iFrame;                // shader playback frame
-uniform vec4 /*  */ iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
-uniform vec4 /*  */ iDate;                 // (year, month, day, time in seconds)
+uniform vec3 /*  */ iResolution; // viewport resolution (in pixels)
+uniform float /* */ iTime;       // shader playback time (in seconds)
+uniform float /* */ iTimeDelta;  // render time (in seconds)
+uniform float /* */ iFrameRate;  // shader frame rate
+uniform int /*   */ iFrame;      // shader playback frame
+uniform vec4 /*  */ iMouse;      // mouse pixel coords. xy: current (if MLB down), zw: click
+uniform vec4 /*  */ iDate;       // (year, month, day, time in seconds)
 
 in vec2 vertex_position;
 
